@@ -6,7 +6,7 @@ function Admin() {
   const [applications, setApplications] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/applications")
+    fetch("https://form-backend-79bf.onrender.com/api/applications")
       .then(res => res.json())
       .then(data => {
         setApplications(data.data);
