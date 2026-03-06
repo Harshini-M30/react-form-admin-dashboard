@@ -16,9 +16,39 @@ app.use(express.json());
 
 console.log("Step 3: Middleware configured");
 
+
+// Root API
 app.get("/", (req, res) => {
   console.log("Step 4: Root API called");
   res.send("Backend server is running");
+});
+
+
+// GET API → Fetch all applications (Admin dashboard)
+app.get("/api/applications", async (req, res) => {
+
+  console.log("Step 9: Fetching applications from MongoDB");
+
+  try {
+
+    const applications = await Application.find().sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      data: applications
+    });
+
+  } catch (error) {
+
+    console.error("Error fetching applications:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Error fetching data"
+    });
+
+  }
+
 });
 
 
@@ -30,13 +60,7 @@ app.post("/api/applications", async (req, res) => {
   const { name, email, phone, message } = req.body;
 
   console.log("Step 7: Data received from frontend");
-
-  console.log({
-    name,
-    email,
-    phone,
-    message
-  });
+  console.log({ name, email, phone, message });
 
   try {
 
@@ -70,35 +94,7 @@ app.post("/api/applications", async (req, res) => {
 });
 
 
-// GET API → Fetch all applications (Admin dashboard)
-app.get("/api/applications", async (req, res) => {
-
-  console.log("Step 9: Fetching applications from MongoDB");
-
-  try {
-
-    const applications = await Application.find().sort({ createdAt: -1 });
-
-    res.status(200).json({
-      success: true,
-      data: applications
-    });
-
-  } catch (error) {
-
-    console.error("Error fetching applications:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Error fetching data"
-    });
-
-  }
-
-});
-
-
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Step 5: Server running on port ${PORT}`);
